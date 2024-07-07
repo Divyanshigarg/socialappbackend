@@ -43,7 +43,7 @@ The server should start at http://localhost:5000 by default.
 Explore and test the API endpoints using the provided Postman collection.
 
 ### Postman Collection
-Import the provided Postman collection (socialn.json) to interact with the API endpoints.
+Import the provided Postman collection (social.json) to interact with the API endpoints.
 
 #### Contributors
 Divyanshi Garg
