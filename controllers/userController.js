@@ -77,7 +77,7 @@ exports.updateUser = async(req,res) => {
         if(!user){
             return response(res, 400, false, 'User does not exist',{})
         }
-        const {name, email, mobileNo} = req.body;
+        const {name, email,countryCode, mobileNo} = req.body;
         const updatedUser = await User.findOneAndUpdate({_id:userId},req.body,{new:true})
         return response(res, 200, true, 'User updated successfully',{updatedUser})
     }catch (error) {
@@ -104,21 +104,29 @@ exports.getUser = async(req,res) => {
  exports.getAllusers = async(req,res) => {
     try {
         const { name } = req.query;
-
+        // Extracting pagination parameters from query string
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        // Calculate skip value for pagination
+        const skip = (page - 1) * limit;
+        let query = {};
         let users;
         if (name) {
             // Find users with a name that matches the query, case-insensitive
-            users = await User.find({ name: { $regex: name, $options: 'i' }, status: 'active' });
+            users = await User.find({ name: { $regex: name, $options: 'i' }, status: 'active' })
         } else {
             // Find all active users
-            users = await User.find({ status: 'active' });
+            users = await User.find({ status: 'active' }).sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);;
         }
+        const noOfEntries = await User.countDocuments(query)
 
         if (!users || users.length === 0) {
             return response(res, 404, false, 'No users found');
         }
 
-        return response(res, 200, true, 'Users retrieved successfully', { users });
+        return response(res, 200, true, 'Users retrieved successfully', { noOfEntries, users });
     } catch (error) {
         console.error('Error retrieving users:', error);
         return response(res, 500, false, 'Internal Server Error');

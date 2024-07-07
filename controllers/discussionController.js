@@ -65,6 +65,25 @@ exports.updateDiscussion = async(req,res) => {
         return response(res, 500, false, 'Internal Server Error');
     }
 }
+//function to get the single discussion/post
+exports.getDiscussion = async (req, res) => {
+    try {
+      const discussionId = req.params.discussionId;
+      const discussion = await Discussion.findById(discussionId);
+  
+      if (!discussion) {
+        return res.status(404).json({ message: 'Discussion not found' });
+      }
+  
+      // Increment the view count
+      discussion.viewCount += 1;
+      await discussion.save();
+  
+      res.status(200).json(discussion);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  };
 
 //function to get all the discussions/posts also user can search based on tags and text also
 exports.discussions = async(req, res) => {
@@ -72,7 +91,11 @@ exports.discussions = async(req, res) => {
         // Get the tags and text from request query params
         const tags = req.query.tags;
         const text = req.query.text;
-
+        // Extracting pagination parameters from query string
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        // Calculate skip value for pagination
+        const skip = (page - 1) * limit;
         // Initialize the query object
         let query = {};
 
@@ -87,13 +110,16 @@ exports.discussions = async(req, res) => {
         }
 
         // Find discussions based on the constructed query
-        const discussions = await Discussion.find(query);
-
+        const discussions = await Discussion.find(query).sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit);
+    
+        const noOfEntries = await Discussion.countDocuments(query)
         if (!discussions || discussions.length === 0) {
             return res.status(404).json({ success: false, message: 'No discussions found' });
         }
 
-        return response(res, 200, true, 'Discussions retrieved successfully', { discussions });
+        return response(res, 200, true, 'Discussions retrieved successfully', {noOfEntries, discussions });
     } catch (error) {
         console.error('Error fetching discussions:', error);
         return res.status(500).json({ success: false, message: 'Internal Server Error' });
@@ -134,7 +160,7 @@ exports.getViewCount = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Discussion not found' });
         }
 
-        return response(res, 200, true, 'View Count fetched successfully', {views: discussion.views });
+        return response(res, 200, true, 'View Count fetched successfully', {views: discussion.viewCount });
     } catch (error) {
         console.error('Error fetching view count:', error);
         return response(res, 500, false, 'Internal Server Error');

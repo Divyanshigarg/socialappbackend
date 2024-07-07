@@ -24,7 +24,8 @@ exports.addComment = async(req,res) => {
       const newComment = await Comment.create({
         text,
         user:userId,
-        discussion: discussionId
+        discussion: discussionId,
+        createdOn: Date.now()
       })
       discussionExist.comments.push(newComment);
       await discussionExist.save();
@@ -145,7 +146,8 @@ exports.replyToComment = async (req, res) => {
         const newReply = {
             text,
             user: userId,
-            discussion: comment.discussion
+            discussion: comment.discussion,
+            createdOn: Date.now()
         };
 
         // Push the new reply into the replies array of the comment

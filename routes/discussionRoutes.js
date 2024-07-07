@@ -5,8 +5,9 @@ const router = express.Router();
 
 router.post('/',checkLogin, discussionController.createDiscussion);
 router.put('/:discussionId',checkLogin,discussionController.updateDiscussion)
+router.get('/:discussionId',checkLogin,discussionController.getDiscussion)
 router.get('/',checkLogin,discussionController.discussions);
 router.delete('/:discussionId',checkLogin,discussionController.deleteDiscussion)
-router.get('/views',checkLogin,discussionController.getViewCount)
+router.get('/views/:discussionId',checkLogin,discussionController.getViewCount)
 
 module.exports = router;
