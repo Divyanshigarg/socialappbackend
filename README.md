@@ -1,4 +1,4 @@
-Social App/Web
+Social App/Web Backend
 Overview
 This repository contains the backend for Social, a social media application designed for users to create posts, follow other users, and engage in discussions.
 
@@ -24,8 +24,10 @@ npm install
 yarn install
 Configuration
 Create a .env file:
-Create a .env file in the root directory based on .env.example. Update the variables as necessary.
-makefile
+Create a .env file in the root directory based on .env.example.
+Update the variables as necessary.
+Example .env file:
+dotenv
 Copy code
 PORT=3000
 MONGODB_URI=mongodb://localhost:27017/mydatabase
@@ -47,6 +49,8 @@ Postman Collection
 Import the provided Postman collection (backend.postman_collection.json) to interact with the API endpoints. How to import a collection in Postman.
 
 Contributors
-Divyanshi Garg email@example.com
+Divyanshi Garg
+Email: email@example.com
 License
 This project is licensed under the MIT License. See the LICENSE file for details.
+
