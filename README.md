@@ -12,7 +12,7 @@ Installation
 Clone the repository:
 
 ## Clone the repository
-git clone <repository-url>
+git clone repository-url</br>
 cd backend
 
 ## Install dependencies
@@ -25,16 +25,13 @@ or
 ### yarn install
 # Example .env file
 
-PORT=3000
-MONGODB_URI=mongodb://localhost:27017/mydatabase
+PORT= 5000 </br>
+MONGODB_URI=mongodb://localhost:27017/mydatabase </br>
 JWT_SECRET=mysecretkey
 
 Running the Application
-To start the backend server, run:
-
-bash
-Copy code
-npm start
+To start the backend server, run:</br>
+#### npm start
 # or
 yarn start
 The server should start at http://localhost:5000 by default.
