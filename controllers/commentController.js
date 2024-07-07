@@ -17,7 +17,7 @@ exports.addComment = async(req,res) => {
         const discussionExist = await Discussion.findOne({_id:discussionId, isDeleted: false});
 
         if (!discussionExist) {
-            return res.status(404).json({ success: false, message: 'Discussion not found' });
+            return response(res, 400, false, 'Discussion not found',{});
         }
 
       const {text,user,discussion, likes} = req.body;
@@ -112,7 +112,7 @@ exports.likeComment = async (req, res) => {
         const alreadyLiked = comment.likes.some(like => like.equals(userId));
 
         if (alreadyLiked) {
-            return res.status(400).json({ success: false, message: 'User already liked this comment' });
+            return response(res, 400, false, 'User already liked this comment',{});
         }
 
         // Add user to likes array
@@ -137,7 +137,7 @@ exports.replyToComment = async (req, res) => {
         const { text } = req.body;
         // Validate if text is provided
         if (!text) {
-            return res.status(400).json({ success: false, message: 'Reply text is required' });
+            return response(res, 400, false, 'Reply text is required',{});
         }
 
         const userId = req.user._id; 

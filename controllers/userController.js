@@ -1,4 +1,5 @@
 const express = require('express')
+const {hashPassword,comparePassword} = require("../helper/encrypt")
 const User = require('../models/userModel')
 const { response } = require('../helper/response');
 const bcrypt = require('bcrypt');
@@ -20,12 +21,18 @@ exports.registerUser = async(req,res) => {
         if(!password)
             return response(res, 400, false, 'Password is required')
 
-        const userExists = await User.findOne({ email, status:'active' });
-        if (userExists) {
-          return response(res, 400, true, 'User already Exist',{})
+        const isEmailAlreadyExist = await User.findOne({email:email})
+        if (isEmailAlreadyExist) {
+        return response(res, 400, false, "User with this email or username already exist",{})
         }
-        const hashedPassword = await bcrypt.hash(password, 12);
-     const newUser = await User.create({
+
+        const isMobileAlreadyExist = await User.findOne({mobileNo:mobileNo})
+        if (isMobileAlreadyExist) {
+        return response(res, 400, false, "User with this mobile or username already exist",{})
+        }
+        // const hashedPassword = await bcrypt.hash(password, 12);
+        const hashedPassword = await hashPassword(password)
+       const newUser = await User.create({
         name,
         email,
         mobileNo,
@@ -52,11 +59,12 @@ exports.login = async(req,res) => {
         if(!user){
             return response(res, 400, false, 'User does not exist',{})
         }
-        const passwordMatch = await bcrypt.compare(password, user.password);
-    
-        if (!passwordMatch) {
-          return res.status(401).send({ message: 'Password Incorrect' });
-        }
+        
+      let hashedPassword = user.password;
+      const isPasswordCorrect = await comparePassword(password, hashedPassword)
+      if (!isPasswordCorrect) {
+        return response(res, 400, false, "Incorrect password", {})
+      }
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
         let userForResponse = {
             _id: user._id,

@@ -40,7 +40,7 @@ exports.updateDiscussion = async(req,res) => {
         let discussion = await Discussion.findById(discussionId);
 
         if (!discussion) {
-            return res.status(404).json({ success: false, message: 'Discussion not found' });
+            return response(res, 400, false, 'Discussion not found',{});
         }
 
         // Update discussion fields
@@ -72,16 +72,16 @@ exports.getDiscussion = async (req, res) => {
       const discussion = await Discussion.findById(discussionId);
   
       if (!discussion) {
-        return res.status(404).json({ message: 'Discussion not found' });
+        return response(res, 400, false, 'Discussion not found',{});
       }
   
       // Increment the view count
       discussion.viewCount += 1;
       await discussion.save();
   
-      res.status(200).json(discussion);
+     return response(res, 200, true, 'Dicsussion fetched usccessfully',{discussion})
     } catch (error) {
-      res.status(500).json({ message: error.message });
+        return response(res, 500, false, 'Internal Server Error' ,{});
     }
   };
 
@@ -116,13 +116,13 @@ exports.discussions = async(req, res) => {
     
         const noOfEntries = await Discussion.countDocuments(query)
         if (!discussions || discussions.length === 0) {
-            return res.status(404).json({ success: false, message: 'No discussions found' });
+            return response(res, 400, false, 'No discussions found' );
         }
 
         return response(res, 200, true, 'Discussions retrieved successfully', {noOfEntries, discussions });
     } catch (error) {
         console.error('Error fetching discussions:', error);
-        return res.status(500).json({ success: false, message: 'Internal Server Error' });
+        return response(res, 500, false, 'Internal Server Error' ,{});
     }
 }
 
@@ -157,7 +157,7 @@ exports.getViewCount = async (req, res) => {
         const discussion = await Discussion.findById(discussionId);
 
         if (!discussion) {
-            return res.status(404).json({ success: false, message: 'Discussion not found' });
+            return response(res, 400, false, 'Discussion not found',{});
         }
 
         return response(res, 200, true, 'View Count fetched successfully', {views: discussion.viewCount });
