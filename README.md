@@ -12,7 +12,7 @@ Installation
 Clone the repository:
 
 ## Clone the repository
-git clone repository-url</br>
+git clone <repository-url></br>
 cd backend
 
 ## Install dependencies
